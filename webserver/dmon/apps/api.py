@@ -15,6 +15,7 @@ def check_status():
 @crossdomain(origin='*')
 def create_service():
     data = request.json
+    print request.json
     if not data.get('name'):
         return jsonify(error='missing name')
     if not data.get('script'):

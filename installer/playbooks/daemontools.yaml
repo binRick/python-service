@@ -1,0 +1,12 @@
+---
+- name: Install Daemontools Role
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+  tasks: 
+  - name: Importing Daemontools Role
+    import_role:
+     name: Daemontools
+    vars:
+     AutoStart: yes  

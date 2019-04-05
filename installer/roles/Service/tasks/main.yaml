@@ -1,0 +1,53 @@
+---
+- name: Check if This Services Directory Exists
+  register: serviceDirectory
+  stat: path=/.services/{{Name}}
+
+- name: Handle Non existent Service
+  when: not serviceDirectory.stat.exists
+  block:
+  - name: Create Outside Dir
+    file: path=/root/.services/{{Name}} state=directory recurse=yes
+  - name: Create Outside Log Dir
+    file: path=/root/.services/{{Name}}/log/main state=directory recurse=yes
+  - name: Copying Service Log Run file
+    copy: src=generic_log.run dest=/root/.services/{{Name}}/log/run mode=0755
+  - name: Deploying Service Run file
+    register: runFile
+    template:
+      src: generic.run.j2
+      dest: "/root/.services/{{Name}}/run"
+      mode: 0755
+  - name: Moving Outside Service Directory
+    shell: "mv /root/.services/{{Name}} /.services/{{Name}}"
+
+- name: Handle Existent Service
+  when: serviceDirectory.stat.exists
+  block:
+  - name: Creating Service Directory
+    file: path=/.services/{{Name}} state=directory recurse=yes
+  - name: Creating Service Log Directory
+    file: path=/.services/{{Name}}/log/main state=directory recurse=yes
+  - name: Copying Service Log Run file
+    copy: src=generic_log.run dest=/.services/{{Name}}/log/run mode=0755
+  - name: Deploying Service Run file
+    register: runFile
+    template:
+      src: generic.run.j2
+      dest: "/.services/{{Name}}/run"
+      mode: 0755
+
+- name: Activating Service
+  file: src=/.services/{{Name}} dest=/service/{{Name}} owner=root group=root state=link
+  register: serviceActivated
+  
+- name: Sleeping for 2 Seconds to let new service start
+  when: serviceActivated is changed
+  pause: seconds=2
+
+- name: Enabling and Starting Service
+  svc: name={{Name}} enabled=yes downed=no state=started service_dir=/service
+
+- name: Restarting Service
+  when: runFile is defined and runFile is changed
+  svc: name={{Name}} state=restarted service_dir=/service

@@ -1,0 +1,16 @@
+[Unit]
+Description={{serviceName|default('daemontools')}} Start supervise
+After=getty.target
+[Service]
+Type=simple
+User=root
+Group=root
+Restart=always
+{% if serviceDirectory is defined %}
+ExecStart=/usr/local/bin/svscan {{serviceDirectory}}
+{% else %}
+ExecStart=/usr/local/bin/svscanboot
+{% endif %}
+TimeoutSec=0
+[Install]
+WantedBy=multi-user.target

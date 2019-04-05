@@ -1,0 +1,11 @@
+#!/bin/sh
+{% if RootHome is defined %}
+export HOME=/root
+{% endif %}
+
+{% if Chdir is defined %}
+cd {{Chdir}}
+{% endif %}
+
+exec 2>&1
+{{Start}}

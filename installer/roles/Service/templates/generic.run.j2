@@ -1,0 +1,17 @@
+#!/bin/sh
+export DAEMONTOOLS_SERVICE=1
+{% if RootHome is defined %}
+export HOME=/root
+{% endif %}
+{% if Chdir is defined %}
+cd {{Chdir}}
+{% endif %}
+{% if servicePreExec is defined %}
+{{servicePreExec}} 2>/dev/null
+{% endif %}
+exec 2>&1
+{% if RunAsUser is not defined or RunAsUser == 'root' %}
+exec {{Exec}}
+{% else %}
+exec /usr/local/bin/setuidgid {{RunAsUser|default('root')}} {{Exec}}
+{% endif %}

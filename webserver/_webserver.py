@@ -21,7 +21,7 @@ def main():
     if not check_commands(CMDS):
         sys.exit(1)
 
-    webapp.run(app, host='0.0.0.0', port=settings.API_PORT)
+    webapp.run(app, host=settings.API_HOST, port=settings.API_PORT)
 
 
 if __name__ == '__main__':
