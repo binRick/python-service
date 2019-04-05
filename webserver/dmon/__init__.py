@@ -8,9 +8,9 @@ import logging
 from tai64n import decode_tai64n
 
 
-SV_DIR = '/service'
+SV_DIR = '/.services'
 LOG_DIR = '/var/log/service'
-SERVICE_DIR = '/.services'
+SERVICE_DIR = '/service'
 SV_SCRIPT = """#!/bin/sh
 exec 2>&1
 %(extra)s
@@ -164,17 +164,17 @@ def start(name):
 def stop(name):
     '''Stop the service.
     '''
-    return _svc_exec(name, '-d')
+    return _svc_exec(name, '-+d')
 
 def exit(name):
     '''Stop the service and the supervise process.
     '''
-    return _svc_exec(name, '-dx')
+    return _svc_exec(name, '-+dx')
 
 def kill(name):
     '''Kill the service process.
     '''
-    return _svc_exec(name, '-k')
+    return _svc_exec(name, '-+k')
 
 def _set_log(name):
     '''Create log directory and service log symlink.

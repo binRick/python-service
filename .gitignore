@@ -1,0 +1,3 @@
+installer/tmp/*
+*.swp
+*.retry
